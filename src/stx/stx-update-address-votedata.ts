@@ -10,7 +10,6 @@ import {
   allEqual,
   awaitAll,
   dbgLog,
-  printDivider,
   STX_ADDRESS_NO,
   STX_ADDRESS_YES,
   STX_VOTE_END,
@@ -40,6 +39,7 @@ async function filterInvalidVotes(
     dbgLog(`checking ${address}`);
     const txs = voteData[address].txs;
     const stackingData = voteData[address].stackingData;
+    // TODO: does one pass give us sufficient info?
     if (txs && stackingData) {
       if (txs.length > 1) {
         const recipients = txs.map((tx) => {
@@ -47,6 +47,8 @@ async function filterInvalidVotes(
             return tx.token_transfer.recipient_address;
         });
         if (recipients && allEqual(recipients as string[])) {
+          // TODO: check here if stacking?
+          // if (stackingData.locked === "0") {}
           dbgLog("valid vote: marking first valid and the rest invalid");
           const validVoteData: StxVoteData = {};
           if (!validVoteData[address]) {
