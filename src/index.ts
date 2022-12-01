@@ -21,16 +21,21 @@ export default {
     switch (controller.cron) {
       case "0 */1 * * *":
         // every hour at 0min update transaction data
+        dbgLog(`cron matched: ${controller.cron}`);
         ctx.waitUntil(updateTxData(env));
         break;
       case "20 */1 * * *":
         // every hour at 20min update stacking data
+        dbgLog(`cron matched: ${controller.cron}`);
         ctx.waitUntil(updateStackingData(env));
         break;
       case "40 */1 * * *":
-        // every hour at 40min update voting data
+        // every hour at 40min update voting data'
+        dbgLog(`cron matched: ${controller.cron}`);
         ctx.waitUntil(updateVotingData(env));
         break;
+      default:
+        dbgLog(`cron not found: ${controller.cron}`);
     }
   },
 };

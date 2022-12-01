@@ -7,8 +7,10 @@ import {
   StxVoteMethodData,
 } from "../types";
 import {
+  allEqual,
   awaitAll,
   dbgLog,
+  printDivider,
   STX_ADDRESS_NO,
   STX_ADDRESS_YES,
   STX_VOTE_END,
@@ -40,9 +42,31 @@ async function filterInvalidVotes(
     const stackingData = voteData[address].stackingData;
     if (txs && stackingData) {
       if (txs.length > 1) {
-        dbgLog(`invalid vote: voted more than once`);
+        const recipients = txs.map((tx) => {
+          if (tx.tx_type === "token_transfer")
+            return tx.token_transfer.recipient_address;
+        });
+        if (recipients && allEqual(recipients as string[])) {
+          dbgLog("valid vote: marking first valid and the rest invalid");
+          const validVoteData: StxVoteData = {};
+          if (!validVoteData[address]) {
+            validVoteData[address] = {};
+          }
+          validVoteData[address].txs = [txs[0]];
+          validVotes[address] = validVoteData[address];
+          const invalidVoteData: StxVoteData = {};
+          if (!invalidVoteData[address]) {
+            invalidVoteData[address] = {};
+          }
+          invalidVoteData[address].txs = txs.slice(1);
+          invalidVotes[address] = invalidVoteData[address];
+          invalidVoteReasons[address] = "multiple votes, only one kept";
+          continue;
+        }
+        dbgLog(`invalid vote: voted more than once for different outcomes`);
         invalidVotes[address] = voteData[address];
-        invalidVoteReasons[address] = "voted more than once";
+        invalidVoteReasons[address] =
+          "voted more than once for different outcomes";
         continue;
       }
       if (txs[0].tx_status !== "success") {

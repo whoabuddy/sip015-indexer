@@ -59,3 +59,6 @@ export const awaitAll = async (env: Env, list: string[], asyncFn: Function) => {
   list.forEach((x) => promises.push(asyncFn(env, x)));
   return Promise.all(promises);
 };
+
+// check if all items in an array are equal
+export const allEqual = (arr: string[]) => arr.every((v) => v === arr[0]);
