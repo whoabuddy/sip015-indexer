@@ -14,4 +14,4 @@ It is automatically invoked via the cron schedule outlined in `wrangler.toml` an
 
 The resulting data is stored in Cloudflare KV, and accessible through the [SIP-015 API](https://api.sip015.xyz) ([GitHub](https://github.com/whoabuddy/sip015-api)).
 
-Types for each object queried/stored can be found in [types.ts](./types.ts).
+Types for each object queried/stored can be found in [types.ts](./src/types.ts).
